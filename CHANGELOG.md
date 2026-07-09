@@ -10,3 +10,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Project scaffolding via `/init-harness` (CLAUDE.md, CONTEXT.md, docs/RESUME.md, docs/iteration-journal.md, docs/ROADMAP.md).
 - Initial portfolio site (Next.js + TypeScript + Tailwind): Hero, Work (contact-sheet grid), Featured Project (mental-health documentary project), About, and Contact sections, ported from a user-supplied HTML/CSS design template. Content is currently placeholder pending real photographs, bio, and contact details.
+- Click-to-enlarge lightbox for every photo on the site; the work grid supports prev/next navigation between all 9 frames.

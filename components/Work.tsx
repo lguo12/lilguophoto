@@ -1,3 +1,5 @@
+import ZoomableImage from "@/components/lightbox/ZoomableImage";
+
 const CATEGORIES = [
   "Portrait",
   "Street",
@@ -15,6 +17,11 @@ const FRAMES = CATEGORIES.map((cat, i) => ({
   num: String(i + 1).padStart(2, "0"),
   cat,
   seed: `lilian-${i + 1}`,
+}));
+
+const GALLERY = FRAMES.map((frame) => ({
+  src: `https://picsum.photos/seed/${frame.seed}/1400/1750`,
+  alt: `Placeholder ${frame.cat.toLowerCase()} photograph ${frame.num}`,
 }));
 
 export default function Work() {
@@ -38,12 +45,14 @@ export default function Work() {
             ))}
           </div>
           <div className="grid">
-            {FRAMES.map((frame) => (
+            {FRAMES.map((frame, i) => (
               <figure className="frame" key={frame.num}>
-                <img
+                <ZoomableImage
                   src={`https://picsum.photos/seed/${frame.seed}/600/750`}
                   alt={`Placeholder ${frame.cat.toLowerCase()} photograph ${frame.num}`}
-                  loading="lazy"
+                  images={GALLERY}
+                  index={i}
+                  fill
                 />
                 <figcaption className="frame-meta">
                   <span>{frame.num}</span>

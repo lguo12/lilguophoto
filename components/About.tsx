@@ -1,3 +1,5 @@
+import ZoomableImage from "@/components/lightbox/ZoomableImage";
+
 export default function About() {
   return (
     <section
@@ -11,10 +13,9 @@ export default function About() {
       <div className="wrap about reveal">
         <div className="about-img">
           {/* TODO: replace with a real portrait */}
-          <img
+          <ZoomableImage
             src="https://picsum.photos/seed/lilian-about/700/875"
             alt="Placeholder portrait of Lilian Guo"
-            loading="lazy"
           />
         </div>
         <div className="about-body">

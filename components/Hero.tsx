@@ -1,3 +1,5 @@
+import ZoomableImage from "@/components/lightbox/ZoomableImage";
+
 export default function Hero() {
   return (
     <section className="hero">
@@ -16,10 +18,10 @@ export default function Hero() {
       </div>
       <div className="hero-frame">
         {/* TODO: replace with a real hero photograph */}
-        <img
+        <ZoomableImage
           src="https://picsum.photos/seed/lilian-hero/1000/1250"
           alt="Placeholder portrait — replace with your own hero image"
-          loading="lazy"
+          fill
         />
         <span className="frame-tag">N° 001 — 2026</span>
       </div>

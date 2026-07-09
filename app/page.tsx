@@ -5,10 +5,12 @@ import FeaturedProject from "@/components/FeaturedProject";
 import About from "@/components/About";
 import ContactFooter from "@/components/ContactFooter";
 import ScrollReveal from "@/components/ScrollReveal";
+import { LightboxProvider } from "@/components/lightbox/LightboxContext";
+import Lightbox from "@/components/lightbox/Lightbox";
 
 export default function Home() {
   return (
-    <>
+    <LightboxProvider>
       <Header />
       <main id="top">
         <Hero />
@@ -18,6 +20,7 @@ export default function Home() {
       </main>
       <ContactFooter />
       <ScrollReveal />
-    </>
+      <Lightbox />
+    </LightboxProvider>
   );
 }

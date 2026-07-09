@@ -1,13 +1,14 @@
+import ZoomableImage from "@/components/lightbox/ZoomableImage";
+
 export default function FeaturedProject() {
   return (
     <section id="projects">
       <div className="wrap essay reveal">
         <div className="essay-img">
           {/* TODO: replace with a real photograph from the project */}
-          <img
+          <ZoomableImage
             src="https://picsum.photos/seed/lilian-project/900/1200"
             alt="Placeholder image for the featured mental health documentary project"
-            loading="lazy"
           />
           <div className="essay-cap">Fig. 1 — from the Mental Health Project</div>
         </div>

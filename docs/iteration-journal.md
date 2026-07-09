@@ -5,6 +5,32 @@ Dated journal of work done, one entry per completed task.
 ## Index
 
 - [2026-07-09 — Scaffold portfolio site from Elena Marsh template](#2026-07-09--scaffold-portfolio-site-from-elena-marsh-template)
+- [2026-07-09 — Add click-to-enlarge lightbox](#2026-07-09--add-click-to-enlarge-lightbox)
+
+## 2026-07-09 — Add click-to-enlarge lightbox
+
+**Task:** User asked to be able to open each picture and see it bigger.
+
+**Summary:** Added a lightbox: clicking any photo (hero, the 9 work-grid frames, featured-project image, about portrait) opens it enlarged in a full-screen overlay. The work grid shares one gallery so the overlay also supports prev/next (arrow-key or on-screen buttons) between all 9 frames; standalone photos (hero/project/about) open without prev/next. Closes via Escape, clicking the backdrop, or a close button; focus moves to the close button on open and body scroll is locked while open.
+
+**Changes:**
+- `components/lightbox/LightboxContext.tsx` — client context/provider holding open-image state (gallery + index) and open/close/next/prev actions.
+- `components/lightbox/Lightbox.tsx` — the overlay UI (backdrop, image, caption, close/nav buttons, keyboard handling).
+- `components/lightbox/ZoomableImage.tsx` — click-target wrapper (`<button><img/></button>`) used in place of raw `<img>`; existing CSS selectors (`.frame img`, `.hero-frame img`, etc.) still apply since they're descendant selectors.
+- `components/{Hero,Work,FeaturedProject,About}.tsx` — swapped `<img>` for `<ZoomableImage>`; `Work.tsx` builds one shared `GALLERY` array (higher-res 1400×1750 picsum crops than the 600×750 grid thumbnails) so the lightbox shows a bigger image than the grid tile.
+- `app/page.tsx` — wrapped in `LightboxProvider`, mounted `<Lightbox />` once at the root.
+- `app/globals.css` — added `.zoomable-trigger`(`--fill`) button-reset styles and `.lightbox-*` overlay styles matching the existing paper/ink/rust palette and mono UI chrome.
+
+**Plan deviations:** none — small, well-specified feature; skipped brainstorm/spec ceremony per cadence compression (single-layer frontend feature, no new logic risk, no security surface).
+
+**Testing / verification:**
+- `pnpm lint` — 0 warnings (the two remaining intentional `<img>` uses, inside `Lightbox.tsx`/`ZoomableImage.tsx`, carry an explicit `eslint-disable-next-line` since they're deliberate, unavoidable while not using `next/image`).
+- `pnpm typecheck` — clean.
+- `pnpm build` — succeeds.
+- Rendered-HTML check confirmed 10 `zoomable-trigger--fill` triggers (9 work frames + hero) and 2 plain `zoomable-trigger` triggers (featured project + about), matching the 12 photos on the page.
+- Not yet done: no automated interaction test (click → overlay opens → arrow-key nav → close) — verified structurally + visually in-browser only, no Track A/B smoke artifacts written (small task, not a milestone close).
+
+**Next steps:** none blocking; still pending from the prior entry — real content and images, deploy target.
 
 ## 2026-07-09 — Scaffold portfolio site from Elena Marsh template
 
