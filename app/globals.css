@@ -257,8 +257,6 @@ h2.section-title {
 
 /* ---------- Contact sheet grid ---------- */
 .contactsheet {
-  border-top: 2px dashed var(--ink-soft);
-  border-bottom: 2px dashed var(--ink-soft);
   padding: 22px 0;
   position: relative;
 }
