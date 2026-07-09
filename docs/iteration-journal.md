@@ -10,6 +10,7 @@ Dated journal of work done, one entry per completed task.
 - [2026-07-09 — Remove contact-sheet dashed border and grid black lines](#2026-07-09--remove-contact-sheet-dashed-border-and-grid-black-lines)
 - [2026-07-09 — Switch deploy target from Vercel to GitHub Pages](#2026-07-09--switch-deploy-target-from-vercel-to-github-pages)
 - [2026-07-09 — Fix failing deploy workflow (pnpm ignored-builds conflict)](#2026-07-09--fix-failing-deploy-workflow-pnpm-ignored-builds-conflict)
+- [2026-07-09 — Fix Node/pnpm version mismatch in the deploy workflow](#2026-07-09--fix-nodepnpm-version-mismatch-in-the-deploy-workflow)
 
 ## 2026-07-09 — Fix failing deploy workflow (pnpm ignored-builds conflict)
 
@@ -31,7 +32,25 @@ Dated journal of work done, one entry per completed task.
 - `pnpm lint` / `pnpm typecheck` / `pnpm build` — all clean after the clean reinstall.
 - Confirmed via `GET /repos/lguo12/lilguophoto/actions/runs` and `/jobs` (public, unauthenticated) exactly which step failed, rather than guessing — job logs themselves needed repo-admin auth we don't have, so root-caused from job-level pass/fail plus local reproduction instead.
 
-**Next steps:** push this fix, the workflow should re-run automatically and the site should go live at `https://lguo12.github.io/lilguophoto/` this time — user to confirm; watch the Actions tab for the new run's outcome.
+**Correction, same day:** the fix above shipped without checking the actual failure-log text (job logs need repo-admin auth we didn't have at the time; only pass/fail per step was visible). After pushing, the workflow failed again on a *different* error, which prompted fetching `GET /repos/{owner}/{repo}/commits/{sha}/check-runs` → `annotations_url` — this endpoint returns failure-annotation text without needing log-download auth, and revealed the real story: the original failure's annotation was `ERROR packages field missing or empty` (a pnpm-v9-specific workspace-validation strictness, unrelated to the ignored-builds contradiction diagnosed above), and it's the *pnpm version bump* (removing the hardcoded `version: 9`, landed in the same commit as the ignored-builds cleanup) that most likely actually fixed it — not the ignored-builds fix itself, which remains good config hygiene but wasn't proven to be the blocker. See the next entry for the follow-up failure this version bump introduced.
+
+## 2026-07-09 — Fix Node/pnpm version mismatch in the deploy workflow
+
+**Task:** direct continuation of the previous entry — after pushing the pnpm-version-and-ignored-builds fix, the workflow's `pnpm install --frozen-lockfile` step failed *again*, still returning GitHub's 404.
+
+**Root cause (found this time via actual annotation text, not step-name guessing):** `GET /repos/lguo12/lilguophoto/commits/{sha}/check-runs` → each check run's `annotations_url` returned the real failure message without needing log-download auth: `pnpm@11.10.0 requires at least Node.js v22.13; current is v20.20.2`, crashing with `ERR_UNKNOWN_BUILTIN_MODULE: node:sqlite` (a Node 22+ builtin pnpm 11 depends on). The workflow's `actions/setup-node@v4` step was still pinned to `node-version: 20`, left over from the original scaffold, and never revisited when the pnpm version was bumped to match the lockfile.
+
+**Fix:** `node-version: 20` → `node-version: 22` in `.github/workflows/deploy-pages.yml`.
+
+**Changes:**
+- `.github/workflows/deploy-pages.yml` — `node-version: 20` → `22`.
+- `docs/iteration-journal.md` — corrected the previous entry's root-cause claim once the annotation text was available.
+
+**Plan deviations / process note:** should have fetched `check-runs` annotations *before* shipping the first fix, not after — guessing root cause from step pass/fail names alone (no auth for full logs) produced a plausible-but-wrong diagnosis the first time. Annotations are readable on any public repo without auth and should be the first stop for CI failures on this project going forward, not job-name inference.
+
+**Testing / verification:** local versions already satisfy this (`node --version` → v24.18.0, well above the v22.13 floor), so nothing to reproduce locally beyond confirming the version numbers; the real test is the next Actions run.
+
+**Next steps:** push, poll the Actions API for this commit's run outcome, confirm the site is actually live at `https://lguo12.github.io/lilguophoto/` (not just "workflow green" — check the real URL).
 
 ## 2026-07-09 — Switch deploy target from Vercel to GitHub Pages
 
