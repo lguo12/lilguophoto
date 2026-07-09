@@ -8,6 +8,32 @@ Dated journal of work done, one entry per completed task.
 - [2026-07-09 — Add click-to-enlarge lightbox](#2026-07-09--add-click-to-enlarge-lightbox)
 - [2026-07-09 — Re-anchor lightbox controls to the viewport](#2026-07-09--re-anchor-lightbox-controls-to-the-viewport)
 - [2026-07-09 — Remove contact-sheet dashed border and grid black lines](#2026-07-09--remove-contact-sheet-dashed-border-and-grid-black-lines)
+- [2026-07-09 — Switch deploy target from Vercel to GitHub Pages](#2026-07-09--switch-deploy-target-from-vercel-to-github-pages)
+
+## 2026-07-09 — Switch deploy target from Vercel to GitHub Pages
+
+**Task:** User set up a GitHub repo (`lguo12/lilguophoto`, connected as `origin` in a prior task) and asked to deploy via GitHub Pages instead of the originally-proposed Vercel.
+
+**Summary:** Since the site has no server-side rendering, API routes, or dynamic segments, converted it to a static export (`output: "export"` in `next.config.ts`) and added a GitHub Actions workflow that builds and publishes to GitHub Pages on every push to `master`.
+
+**Changes:**
+- `next.config.ts` — added `output: "export"`, `basePath: "/lilguophoto"` (required because the repo isn't a `<username>.github.io` root repo, so GitHub Pages serves it at `https://lguo12.github.io/lilguophoto/`), and `images.unoptimized: true` (moot today since the site already uses plain `<img>`, not `next/image`, but `next/image` can't run its optimizer without a server regardless).
+- `.github/workflows/deploy-pages.yml` — new: checkout → pnpm install → lint → typecheck → build → `actions/upload-pages-artifact` → `actions/deploy-pages`, triggered on push to `master` (+ manual `workflow_dispatch`).
+- `CLAUDE.md` — deploy target updated from Vercel to GitHub Pages; "Don't do" section updated to reflect the static-export constraint (no API routes/Server Actions/dynamic rendering; a real contact-form backend would need a third-party service since there's no server runtime).
+
+**Plan deviations:** deploy target changed from the originally-recommended Vercel (chosen at project bootstrap) to GitHub Pages, per explicit user request. No functional loss for this site since it was already 100% static content.
+
+**Testing / verification:**
+- `pnpm lint` / `pnpm typecheck` — clean.
+- `pnpm build` with `output: "export"` — succeeds, produces `out/` with `index.html`, `404.html`, `_next/static/...`.
+- Verified `basePath` actually applied: grepped the exported `index.html` and confirmed asset URLs are prefixed `/lilguophoto/_next/static/...`, matching where GitHub Pages will actually serve them from.
+- Not yet verified: the live GitHub Actions run itself (requires the one-time manual repo setting below) and the real deployed URL.
+
+**Next steps (user action required — cannot be done from the CLI without repo-admin API access):**
+1. In the GitHub repo → Settings → Pages → Source, select **"GitHub Actions"** (one-time toggle).
+2. Push this commit (or re-run the workflow) to trigger the first deploy.
+3. Site will be live at `https://lguo12.github.io/lilguophoto/`.
+4. Still pending from earlier entries: real content/images.
 
 ## 2026-07-09 — Remove contact-sheet dashed border and grid black lines
 

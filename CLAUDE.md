@@ -14,7 +14,7 @@ Lilian Guo's photography portfolio website — portrait, street, and travel work
 - Queue / background: none
 - Auth: none
 - Test runner: Vitest (unit) + Playwright (e2e) — install when first test is written
-- Deploy target: Vercel
+- Deploy target: GitHub Pages, via `.github/workflows/deploy-pages.yml` (static export, `output: "export"` in `next.config.ts`). Served at `https://lguo12.github.io/lilguophoto/` — note the `basePath: "/lilguophoto"` in `next.config.ts` this requires; remove it if a custom domain is ever attached.
 
 ## Commands (one-liners)
 
@@ -36,7 +36,8 @@ pnpm build        # production build
 
 ## Don't do
 
-- No hardcoded secrets — use `.env.local` (gitignored) + Vercel env vars for anything added later (e.g. a contact-form API key).
+- No hardcoded secrets. GitHub Pages is static-only (no server runtime) — anything needing a real backend (e.g. a contact form) must call a third-party service (Formspree, etc.) from the client, or this deploy target needs to change.
+- No Next.js features that require a server (API routes, Server Actions, dynamic rendering, `next/image` optimization) — `output: "export"` in `next.config.ts` means the whole site must stay statically exportable.
 - No `--no-verify` on commits. Fix the hook complaint.
 - No unoptimized images committed to `public/` — use `next/image` and reasonably sized source files.
 
