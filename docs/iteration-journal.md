@@ -9,6 +9,29 @@ Dated journal of work done, one entry per completed task.
 - [2026-07-09 — Re-anchor lightbox controls to the viewport](#2026-07-09--re-anchor-lightbox-controls-to-the-viewport)
 - [2026-07-09 — Remove contact-sheet dashed border and grid black lines](#2026-07-09--remove-contact-sheet-dashed-border-and-grid-black-lines)
 - [2026-07-09 — Switch deploy target from Vercel to GitHub Pages](#2026-07-09--switch-deploy-target-from-vercel-to-github-pages)
+- [2026-07-09 — Fix failing deploy workflow (pnpm ignored-builds conflict)](#2026-07-09--fix-failing-deploy-workflow-pnpm-ignored-builds-conflict)
+
+## 2026-07-09 — Fix failing deploy workflow (pnpm ignored-builds conflict)
+
+**Task:** After the user made the repo public and set Pages source to "GitHub Actions" per the prior task's instructions, the site returned GitHub's generic 404 ("File not found").
+
+**Root cause (found via the public GitHub Actions REST API, no auth needed for a public repo's run list):** the "Deploy to GitHub Pages" workflow's `pnpm install --frozen-lockfile` step failed. `pnpm-workspace.yaml` had both an `allowBuilds: {sharp: true, unrs-resolver: true}` block (written by `pnpm approve-builds --all`, run earlier this session to unblock a local `[ERR_PNPM_IGNORED_BUILDS]` error) **and** the original `ignoredBuiltDependencies: [sharp, unrs-resolver]` list from the `create-next-app` scaffold — the two configs contradict each other. Locally this didn't reproduce because the approval had already been granted in a prior step of the same environment; a genuinely fresh install (CI, or a locally wiped `node_modules`) hit the ignored-builds safety gate and exited non-zero, so every step after `pnpm install` in the workflow was skipped, `out/` was never produced, and `actions/deploy-pages` had nothing to publish — hence the 404 (not our app's 404, GitHub's own "no site here" page).
+
+**Also fixed while here:** the workflow pinned `pnpm/action-setup@v4` to `version: 9`, but the lockfile was generated locally with pnpm `11.10.0` — a real version-drift risk (older pnpm might not even understand newer config keys like `allowBuilds`). Removed the hardcoded CI version and instead pinned `"packageManager": "pnpm@11.10.0"` in `package.json` (the standard Corepack field), which `pnpm/action-setup@v4` auto-detects when no explicit `version:` is given — CI and local now always match by construction instead of by two numbers happening to agree.
+
+**Changes:**
+- `pnpm-workspace.yaml` — removed the redundant/contradictory `ignoredBuiltDependencies` list, keeping only `allowBuilds`.
+- `package.json` — added `"packageManager": "pnpm@11.10.0"`.
+- `.github/workflows/deploy-pages.yml` — dropped the hardcoded `version: 9` from `pnpm/action-setup@v4`.
+
+**Plan deviations:** none in scope, but a process note: `pnpm approve-builds` should be treated as a config-writing command, not a one-off local fix — its output belongs in the commit that also updates any conflicting existing config, not left to drift.
+
+**Testing / verification:**
+- Simulated CI's fresh-environment install locally: deleted `node_modules` entirely, ran `pnpm install --frozen-lockfile` — succeeded with no ignored-builds error (previously this exact reproduction would have failed the same way CI did).
+- `pnpm lint` / `pnpm typecheck` / `pnpm build` — all clean after the clean reinstall.
+- Confirmed via `GET /repos/lguo12/lilguophoto/actions/runs` and `/jobs` (public, unauthenticated) exactly which step failed, rather than guessing — job logs themselves needed repo-admin auth we don't have, so root-caused from job-level pass/fail plus local reproduction instead.
+
+**Next steps:** push this fix, the workflow should re-run automatically and the site should go live at `https://lguo12.github.io/lilguophoto/` this time — user to confirm; watch the Actions tab for the new run's outcome.
 
 ## 2026-07-09 — Switch deploy target from Vercel to GitHub Pages
 
