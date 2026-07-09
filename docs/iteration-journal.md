@@ -48,9 +48,11 @@ Dated journal of work done, one entry per completed task.
 
 **Plan deviations / process note:** should have fetched `check-runs` annotations *before* shipping the first fix, not after — guessing root cause from step pass/fail names alone (no auth for full logs) produced a plausible-but-wrong diagnosis the first time. Annotations are readable on any public repo without auth and should be the first stop for CI failures on this project going forward, not job-name inference.
 
-**Testing / verification:** local versions already satisfy this (`node --version` → v24.18.0, well above the v22.13 floor), so nothing to reproduce locally beyond confirming the version numbers; the real test is the next Actions run.
+**Testing / verification:** local versions already satisfy this (`node --version` → v24.18.0, well above the v22.13 floor), so nothing to reproduce locally beyond confirming the version numbers.
 
-**Next steps:** push, poll the Actions API for this commit's run outcome, confirm the site is actually live at `https://lguo12.github.io/lilguophoto/` (not just "workflow green" — check the real URL).
+**Outcome — confirmed, not assumed:** workflow run completed with `conclusion: success`. Independently verified the site itself (not just the workflow badge): `curl -s -o /dev/null -w "%{http_code}" https://lguo12.github.io/lilguophoto/` → `200`, and the fetched HTML contains "Lilian", "Guo", "Portrait", "Mental Health Project" — the real page, not a cached 404. Site is live at **https://lguo12.github.io/lilguophoto/**.
+
+**Next steps:** none blocking for deploy. Still pending from earlier entries — real content/images to replace all `TODO`-marked placeholders.
 
 ## 2026-07-09 — Switch deploy target from Vercel to GitHub Pages
 

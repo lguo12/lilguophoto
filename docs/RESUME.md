@@ -14,6 +14,8 @@ Site scaffolded: Next.js 16 + TypeScript + Tailwind v4 + pnpm, deployed structur
 
 Live structure: `Header`, `Hero`, `Work` (contact-sheet grid), `FeaturedProject`, `About`, `ContactFooter`, `ScrollReveal` in `components/`, styled via `app/globals.css`.
 
-**All content is placeholder** (picsum.photos images, generic bio/stats/contact copy) — every placeholder is `TODO`-marked in the component source. See `docs/iteration-journal.md` 2026-07-09 entry for full detail.
+**All content is placeholder** (picsum.photos images, generic bio/stats/contact copy) — every placeholder is `TODO`-marked in the component source. See `docs/iteration-journal.md` 2026-07-09 entries for full detail.
 
-**Next step:** gather real content (bio, stats, contact links, photographs) and swap in; decide deploy target (Vercel proposed); optionally run a full brainstorm to scope any additional sections beyond the ported template.
+**Live at https://lguo12.github.io/lilguophoto/** — deployed via GitHub Pages, auto-redeploys on every push to `master` (`.github/workflows/deploy-pages.yml`). Repo is public (required for free GitHub Pages).
+
+**Next step:** gather real content (bio, stats, contact links, photographs) and swap in; optionally run a full brainstorm to scope any additional sections beyond the ported template.
