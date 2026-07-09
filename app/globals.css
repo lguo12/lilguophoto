@@ -275,8 +275,7 @@ h2.section-title {
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 2px;
-  background: var(--ink);
+  gap: 0;
   margin: 14px 0;
 }
 .frame {

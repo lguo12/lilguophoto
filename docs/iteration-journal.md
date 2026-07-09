@@ -7,6 +7,29 @@ Dated journal of work done, one entry per completed task.
 - [2026-07-09 — Scaffold portfolio site from Elena Marsh template](#2026-07-09--scaffold-portfolio-site-from-elena-marsh-template)
 - [2026-07-09 — Add click-to-enlarge lightbox](#2026-07-09--add-click-to-enlarge-lightbox)
 - [2026-07-09 — Re-anchor lightbox controls to the viewport](#2026-07-09--re-anchor-lightbox-controls-to-the-viewport)
+- [2026-07-09 — Remove contact-sheet dashed border and grid black lines](#2026-07-09--remove-contact-sheet-dashed-border-and-grid-black-lines)
+
+## 2026-07-09 — Remove contact-sheet dashed border and grid black lines
+
+**Task:** User reported the dashed line above the Work grid was still visible after the prior fix, and separately disliked the black border around the grid photos.
+
+**Root cause:** the dashed-border removal from the prior task had landed correctly in `app/globals.css`, but the running `pnpm dev` server (started via Git Bash in an earlier turn) was stale and never picked up that edit or the lightbox-redesign edit before it — its compiled CSS chunk still contained the old `border-top/border-bottom: 2px dashed` rule, confirmed by fetching `/_next/static/chunks/[root-of-the-server]*.css` directly and finding the dashed rule still present even though the source file had it removed. Likely a file-watcher gap between the Git-Bash-spawned Node process and the Windows filesystem.
+
+**Fix:**
+- Killed the stale dev-server process (bound to port 3000), deleted `.next/` to drop any stale Turbopack cache, and restarted `pnpm dev` natively via PowerShell instead of Git Bash.
+- Verified by re-fetching the compiled CSS chunk directly: 0 matches for "dashed", and `.grid` now shows the intended `gap: 0` rule — confirming the dev server is now actually in sync with source.
+- Separately, removed the black lines between grid photos: `.grid` had `gap: 2px; background: var(--ink);`, which showed the dark background through the 2px gaps as thin black borders around every photo. Changed to `gap: 0` and dropped the background declaration.
+
+**Changes:**
+- `app/globals.css` — `.grid` gap changed from `2px` (with `background: var(--ink)`) to `0` (no background); `.contactsheet` dashed borders (already removed in the prior task, now actually verified live).
+
+**Plan deviations:** none in scope, but flagging for future sessions: **restart the dev server via PowerShell, not Git Bash**, on this machine — Git-Bash-spawned `next dev` did not reliably pick up file changes.
+
+**Testing / verification:**
+- `pnpm lint` / `pnpm typecheck` / `pnpm build` — all clean.
+- Compiled dev-server CSS fetched and inspected directly (not just assumed from source) to confirm the fix actually took effect this time.
+
+**Next steps:** confirm with the user that both the dashed line and the black grid borders are gone; still pending — real content/images, deploy target.
 
 ## 2026-07-09 — Re-anchor lightbox controls to the viewport
 
