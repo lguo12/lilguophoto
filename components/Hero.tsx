@@ -22,6 +22,7 @@ export default function Hero() {
           src="https://picsum.photos/seed/lilian-hero/1000/1250"
           alt="Placeholder portrait — replace with your own hero image"
           fill
+          loading="eager"
         />
         <span className="frame-tag">N° 001 — 2026</span>
       </div>

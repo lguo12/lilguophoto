@@ -1,11 +1,23 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLightbox } from "./LightboxContext";
 
 export default function Lightbox() {
   const { state, closeLightbox, next, prev } = useLightbox();
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
+  const [loaded, setLoaded] = useState(false);
+
+  // Reset the fade-in/spinner state whenever the shown image changes (open,
+  // or prev/next within a gallery) — a src change alone doesn't remount the
+  // <img>, so this can't be initial useState. Cached images can already be
+  // `.complete` by the time this runs (a known browser quirk that would
+  // otherwise leave the spinner stuck), so check for that too.
+  const currentSrc = state ? state.images[state.index].src : null;
+  useEffect(() => {
+    setLoaded(imgRef.current?.complete ?? false);
+  }, [currentSrc]);
 
   useEffect(() => {
     if (!state) return;
@@ -79,8 +91,19 @@ export default function Lightbox() {
       )}
 
       <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
+        {!loaded && (
+          <div className="lightbox-spinner" role="status" aria-label="Loading photo">
+            <span />
+          </div>
+        )}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={current.src} alt={current.alt} />
+        <img
+          ref={imgRef}
+          src={current.src}
+          alt={current.alt}
+          className={loaded ? "is-loaded" : undefined}
+          onLoad={() => setLoaded(true)}
+        />
 
         <span className="lightbox-caption">
           {current.alt}

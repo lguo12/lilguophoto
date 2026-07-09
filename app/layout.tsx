@@ -36,6 +36,14 @@ export default function RootLayout({
       lang="en"
       className={`${fraunces.variable} ${newsreader.variable} ${ibmPlexMono.variable}`}
     >
+      <head>
+        {/* Placeholder photos are served from picsum.photos, which redirects to
+            its Fastly CDN host — preconnect to both to cut connection setup
+            time off the first (uncached) image request. Remove once real,
+            self-hosted photos replace the picsum placeholders. */}
+        <link rel="preconnect" href="https://picsum.photos" />
+        <link rel="preconnect" href="https://fastly.picsum.photos" crossOrigin="" />
+      </head>
       <body>{children}</body>
     </html>
   );

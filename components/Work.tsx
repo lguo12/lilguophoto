@@ -19,8 +19,12 @@ const FRAMES = CATEGORIES.map((cat, i) => ({
   seed: `lilian-${i + 1}`,
 }));
 
+// Reuse the exact same URL as the grid thumbnail (not a separate, larger
+// picsum request) so opening the lightbox is an instant cache hit instead of
+// a fresh, previously-uncached fetch. Swap for real, properly-sized photos
+// once available.
 const GALLERY = FRAMES.map((frame) => ({
-  src: `https://picsum.photos/seed/${frame.seed}/1400/1750`,
+  src: `https://picsum.photos/seed/${frame.seed}/600/750`,
   alt: `Placeholder ${frame.cat.toLowerCase()} photograph ${frame.num}`,
 }));
 
@@ -48,8 +52,8 @@ export default function Work() {
             {FRAMES.map((frame, i) => (
               <figure className="frame" key={frame.num}>
                 <ZoomableImage
-                  src={`https://picsum.photos/seed/${frame.seed}/600/750`}
-                  alt={`Placeholder ${frame.cat.toLowerCase()} photograph ${frame.num}`}
+                  src={GALLERY[i].src}
+                  alt={GALLERY[i].alt}
                   images={GALLERY}
                   index={i}
                   fill

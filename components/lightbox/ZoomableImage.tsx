@@ -33,7 +33,12 @@ export default function ZoomableImage({
       aria-label={`Open larger view: ${alt}`}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={src} alt={alt} loading={loading} />
+      <img
+        src={src}
+        alt={alt}
+        loading={loading}
+        fetchPriority={loading === "eager" ? "high" : "auto"}
+      />
     </button>
   );
 }

@@ -11,6 +11,30 @@ Dated journal of work done, one entry per completed task.
 - [2026-07-09 — Switch deploy target from Vercel to GitHub Pages](#2026-07-09--switch-deploy-target-from-vercel-to-github-pages)
 - [2026-07-09 — Fix failing deploy workflow (pnpm ignored-builds conflict)](#2026-07-09--fix-failing-deploy-workflow-pnpm-ignored-builds-conflict)
 - [2026-07-09 — Fix Node/pnpm version mismatch in the deploy workflow](#2026-07-09--fix-nodepnpm-version-mismatch-in-the-deploy-workflow)
+- [2026-07-09 — Fix slow photo loading](#2026-07-09--fix-slow-photo-loading)
+
+## 2026-07-09 — Fix slow photo loading
+
+**Task:** User reported photos loading very slowly when first opened.
+
+**Root cause, two separate issues:**
+1. `Hero.tsx`'s photo (the first thing visible on the page) defaulted to `loading="lazy"` via `ZoomableImage`'s default — lazy-loading an above-the-fold image delays it for no benefit, since the browser has to wait to even start the request until it determines the image is near-viewport, which for the very first image on the page adds pointless delay.
+2. `Work.tsx`'s lightbox `GALLERY` pointed at a *different*, larger picsum URL (`/1400/1750`) than the grid thumbnail (`/600/750`) for the same photo. Clicking a thumbnail therefore always triggered a brand-new, previously-uncached network request to picsum.photos for a differently-sized image — exactly what "slow when first opened" describes, since picsum has to freshly generate/serve an image it's never been asked for at that exact seed+size before.
+
+**Fix:**
+- `Hero.tsx` — `ZoomableImage` now passed `loading="eager"`; `ZoomableImage.tsx` also sets `fetchPriority="high"` whenever `loading="eager"`, to hint the browser to prioritize it.
+- `Work.tsx` — `GALLERY` now reuses the exact same `/600/750` URL as the grid thumbnails (instead of a separate `/1400/1750` request), so opening the lightbox is a browser-cache hit, not a fresh fetch. Quality tradeoff is irrelevant for now since these are temporary picsum placeholders anyway.
+- `app/layout.tsx` — added `<link rel="preconnect">` for `picsum.photos` and its CDN host `fastly.picsum.photos` (picsum redirects there), cutting connection-setup time off whichever image request *is* still uncached.
+- `components/lightbox/Lightbox.tsx` + `app/globals.css` — added a loading spinner + opacity fade-in for the lightbox image (tracks an `img.complete`/`onLoad` state, reset on src change), so if an image genuinely is still loading, it reads as "loading," not "broken."
+
+**Plan deviations:** none — direct bug-shaped fix, no ceremony needed.
+
+**Testing / verification:**
+- `pnpm lint` / `pnpm typecheck` / `pnpm build` — all clean.
+- Grepped the exported HTML to confirm: preconnect tags present; hero has `"loading":"eager"`; all 9 work-grid gallery entries now use `/600/750` (matching their thumbnails) instead of `/1400/1750`.
+- Not independently measured against a real slow network (no network-throttling tool available this session) — the fix addresses the two concretely identifiable causes (lazy above-the-fold image + duplicate uncached fetch on click) rather than a measured before/after number.
+
+**Next steps:** once real photos replace the picsum placeholders, this whole class of issue (redirect + cold-generation latency from a third-party placeholder service) goes away — real, self-hosted, pre-sized images will be the actual fix, this entry is a mitigation for the placeholder-content period only.
 
 ## 2026-07-09 — Fix failing deploy workflow (pnpm ignored-builds conflict)
 
