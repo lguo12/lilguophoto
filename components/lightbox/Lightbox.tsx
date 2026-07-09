@@ -40,27 +40,45 @@ export default function Lightbox() {
       aria-label={current.alt}
       onClick={closeLightbox}
     >
-      <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
+      <button
+        type="button"
+        className="lightbox-close"
+        onClick={closeLightbox}
+        ref={closeButtonRef}
+        aria-label="Close"
+      >
+        ✕
+      </button>
+
+      {hasMultiple && (
         <button
           type="button"
-          className="lightbox-close"
-          onClick={closeLightbox}
-          ref={closeButtonRef}
+          className="lightbox-nav lightbox-nav--prev"
+          onClick={(e) => {
+            e.stopPropagation();
+            prev();
+          }}
+          aria-label="Previous photo"
         >
-          Close ✕
+          ‹
         </button>
+      )}
 
-        {hasMultiple && (
-          <button
-            type="button"
-            className="lightbox-nav lightbox-nav--prev"
-            onClick={prev}
-            aria-label="Previous photo"
-          >
-            ‹
-          </button>
-        )}
+      {hasMultiple && (
+        <button
+          type="button"
+          className="lightbox-nav lightbox-nav--next"
+          onClick={(e) => {
+            e.stopPropagation();
+            next();
+          }}
+          aria-label="Next photo"
+        >
+          ›
+        </button>
+      )}
 
+      <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={current.src} alt={current.alt} />
 
@@ -68,17 +86,6 @@ export default function Lightbox() {
           {current.alt}
           {hasMultiple ? ` — ${state.index + 1} / ${state.images.length}` : ""}
         </span>
-
-        {hasMultiple && (
-          <button
-            type="button"
-            className="lightbox-nav lightbox-nav--next"
-            onClick={next}
-            aria-label="Next photo"
-          >
-            ›
-          </button>
-        )}
       </div>
     </div>
   );

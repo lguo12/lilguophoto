@@ -516,96 +516,102 @@ footer p {
 }
 
 /* ---------- Lightbox ---------- */
+/* Fixed to the viewport (not the document), so it always appears centered
+   in the current window regardless of scroll position or image size. */
 .lightbox-backdrop {
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: rgba(36, 31, 28, 0.92);
+  background: rgba(15, 13, 11, 0.94);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 32px;
+  padding: 90px 100px;
 }
 .lightbox-content {
-  position: relative;
-  max-width: min(90vw, 1100px);
-  max-height: 90vh;
+  background: var(--paper);
+  padding: 16px 16px 20px;
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.5);
+  max-width: 100%;
+  max-height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
 }
 .lightbox-content img {
-  max-width: 100%;
-  max-height: 78vh;
+  display: block;
+  max-width: min(82vw, 1000px);
+  max-height: 74vh;
   width: auto;
   height: auto;
   object-fit: contain;
   filter: sepia(0.28) contrast(1.06) saturate(0.92);
-  border: 1px solid rgba(232, 225, 210, 0.25);
 }
 .lightbox-caption {
   font-family: var(--font-mono-stack);
-  font-size: 12px;
+  font-size: 11px;
   letter-spacing: 0.05em;
-  color: var(--paper);
-  opacity: 0.75;
+  color: var(--ink-soft);
   text-align: center;
 }
+
+/* Close + nav controls are fixed to the viewport corners/edges, siblings of
+   .lightbox-content, so their position never depends on image dimensions. */
 .lightbox-close {
-  position: absolute;
-  top: -44px;
-  right: 0;
+  position: fixed;
+  top: 22px;
+  right: 28px;
+  z-index: 101;
   background: none;
-  border: 1px solid rgba(232, 225, 210, 0.4);
+  border: none;
   color: var(--paper);
-  font-family: var(--font-mono-stack);
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 6px 12px;
-  cursor: pointer;
-}
-.lightbox-close:hover {
-  border-color: var(--rust);
-  color: var(--rust);
-}
-.lightbox-nav {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(36, 31, 28, 0.6);
-  border: 1px solid rgba(232, 225, 210, 0.4);
-  color: var(--paper);
-  font-size: 20px;
+  font-size: 22px;
   line-height: 1;
   width: 44px;
   height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.lightbox-close:hover {
+  color: var(--rust);
+}
+.lightbox-nav {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 101;
+  background: none;
+  border: none;
+  color: var(--paper);
+  font-size: 40px;
+  line-height: 1;
+  width: 64px;
+  height: 64px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .lightbox-nav:hover {
-  border-color: var(--rust);
   color: var(--rust);
 }
 .lightbox-nav--prev {
-  left: -60px;
+  left: 8px;
 }
 .lightbox-nav--next {
-  right: -60px;
+  right: 8px;
 }
-@media (max-width: 900px) {
-  .lightbox-nav--prev {
-    left: 4px;
+@media (max-width: 700px) {
+  .lightbox-backdrop {
+    padding: 60px 16px;
   }
-  .lightbox-nav--next {
-    right: 4px;
-  }
-  .lightbox-close {
-    top: 8px;
-    right: 8px;
+  .lightbox-nav {
+    width: 44px;
+    height: 44px;
+    font-size: 30px;
   }
 }
 

@@ -6,6 +6,25 @@ Dated journal of work done, one entry per completed task.
 
 - [2026-07-09 — Scaffold portfolio site from Elena Marsh template](#2026-07-09--scaffold-portfolio-site-from-elena-marsh-template)
 - [2026-07-09 — Add click-to-enlarge lightbox](#2026-07-09--add-click-to-enlarge-lightbox)
+- [2026-07-09 — Re-anchor lightbox controls to the viewport](#2026-07-09--re-anchor-lightbox-controls-to-the-viewport)
+
+## 2026-07-09 — Re-anchor lightbox controls to the viewport
+
+**Task:** User reported the lightbox opening "at the bottom of the page" and asked for a real popup feel instead, referencing screenshots of franklinyeep.com's lightbox (dark dimmed backdrop, photo shown in a white mat/border, close × fixed in the screen's top-right corner).
+
+**Summary:** Moved the close and prev/next buttons out of `.lightbox-content` (whose size varies with each image) and made them direct children of `.lightbox-backdrop`, positioned with `position: fixed` at the viewport's corners/edges (close top-right, nav left/right-center) instead of `position: absolute` relative to the image box. Restyled `.lightbox-content` as a white paper-colored mat around the photo (padding + box-shadow) matching the reference screenshots, and simplified the close control from a bordered "Close ✕" chip to a plain icon button.
+
+**Changes:**
+- `components/lightbox/Lightbox.tsx` — close/nav buttons moved to be siblings of `.lightbox-content` rather than children of it; nav `onClick` handlers now stop propagation directly (previously relied on `.lightbox-content`'s stopPropagation wrapper, which no longer wraps them).
+- `app/globals.css` — rewrote the `.lightbox-*` rules: viewport-fixed close/nav controls, white-mat `.lightbox-content`, larger backdrop padding.
+
+**Plan deviations:** none — direct follow-up fix to the same small feature, no new ceremony needed.
+
+**Testing / verification:**
+- `pnpm lint` / `pnpm typecheck` / `pnpm build` — all clean.
+- Dev server hot-reloaded; not independently screenshotted by the assistant (no browser/screenshot tool available this session) — visual confirmation is on the user via the reopened browser tab.
+
+**Next steps:** confirm with the user that the popup now matches the reference behavior; still pending — real content/images, deploy target.
 
 ## 2026-07-09 — Add click-to-enlarge lightbox
 
