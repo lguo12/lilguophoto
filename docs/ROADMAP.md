@@ -1,6 +1,6 @@
 # ROADMAP
 
-**Goal:** Build and ship a personal portfolio website (Next.js + TypeScript + Tailwind, deployed on Vercel) showcasing projects, resume/CV, and contact info.
+**Goal:** Build and ship Lilian Guo's photography portfolio website (Next.js + TypeScript + Tailwind, deployed on Vercel) showcasing portrait/street/travel work and a featured mental-health documentary project.
 
 ## Status legend
 
@@ -10,7 +10,7 @@
 
 | # | Milestone | Status |
 |---|-----------|--------|
-| 1 | TBD — filled in during first brainstorm | ☐ |
+| 1 | Portfolio site build (structure ported from user-supplied template; content placeholder) | ▶ |
 
 ## How a milestone runs
 
@@ -23,4 +23,4 @@
 
 ## Plan changes
 
-(none yet)
+- **2026-07-09** — Goal narrowed from generic "portfolio website" to a photography portfolio, following user-supplied design template + content direction. Structure sourced from a static HTML template (photography site for a fictional photographer), repurposed with a "Projects" section (featured mental-health documentary project) replacing the template's "Essays" section. Original recommended stack (Next.js/TS/Tailwind/pnpm) unchanged.

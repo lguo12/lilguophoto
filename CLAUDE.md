@@ -2,7 +2,7 @@
 
 ## What this is
 
-Personal portfolio website for showcasing projects, resume/CV, and contact info.
+Lilian Guo's photography portfolio website — portrait, street, and travel work, plus a featured mental-health documentary project. Design/structure ported from a user-supplied static HTML template.
 
 ## Stack
 
